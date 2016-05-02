@@ -1,0 +1,6 @@
+# This is Git's per-user configuration file.
+[user]
+	name = Cory Levinson
+	email = cory@soundcloud.com
+[push]
+	default = simple
