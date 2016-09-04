@@ -1,8 +1,9 @@
 # Comment
 
-PROMPT='%{$fg[yellow]%}λ %{$fg[green]%}%c %{$fg[yellow]%}→ %{$reset_color%}'
+PROMPT='%{$fg[green]%}%c %{$fg[yellow]%}→ %{$reset_color%}'
 
-RPROMPT='%{$fg[blue]%}$(git_prompt_info)%{$reset_color%}$(git_prompt_status)%{$reset_color%}'
+#RPROMPT='%{$fg[blue]%}$(git_prompt_info)%{$reset_color%}$(git_prompt_status)%{$reset_color%}'
+RPROMPT='$(git_super_status)'
 
 ZSH_THEME_GIT_PROMPT_PREFIX="⎞"
 ZSH_THEME_GIT_PROMPT_SUFFIX=""

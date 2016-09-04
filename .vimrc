@@ -17,6 +17,8 @@ Plugin 'Shougo/neocomplete'
 Plugin 'wlangstroth/vim-racket'
 Plugin 'luochen1990/rainbow'
 Plugin 'airblade/vim-gitgutter'
+Plugin 'wincent/command-t'
+Plugin 'jszakmeister/vim-togglecursor'
 
 " The following are examples of different formats supported.
 " Keep Plugin commands between vundle#begin/end.
@@ -35,6 +37,17 @@ let g:NERDTreeDirArrowCollapsible = '▾'
 
 
 map <C-n> :NERDTreeToggle<CR>
+
+" set p, c, and d to not yank the deleted text
+xnoremap p pgvy
+nnoremap d "_d
+vnoremap d "_d
+nnoremap D "_D
+vnoremap D "_D
+nnoremap c "_c
+vnoremap c "_c
+nnoremap C "_C
+vnoremap C "_C
 
 let g:dbext_default_profile_redpanda = 'type=PGSQL:host=redpanda:user=cory:port=5432:dbname=redpanda'
 let g:dbext_default_profile_workingpanda = 'type=PGSQL:host=workingpanda:user=cory:port=5432:dbname=workingpanda'
@@ -96,6 +109,11 @@ smap <C-k>     <Plug>(neosnippet_expand_or_jump)
 xmap <C-k>     <Plug>(neosnippet_expand_target)
 
 
+" Cursor stuff.... make it underlines and sometimes not 
+let g:togglecursor_default = "block"
+let g:togglecursor_insert = "underline"
+
+
 
 inoremap <expr><C-g>     neocomplete#undo_completion()
 inoremap <expr><C-l>     neocomplete#complete_common_string()
@@ -117,15 +135,10 @@ set list
 set backspace=2
 set tabstop=2 shiftwidth=2 expandtab ai
 
-highlight LineNr ctermfg=grey ctermbg=black
+highlight LineNr ctermfg=blue ctermbg=NONE
 highlight SignColumn ctermbg=blue
 
-set relativenumber
 set number
-
-au InsertEnter * :set norelativenumber
-au InsertLeave * :set relativenumber
-
 
 set laststatus=2
 

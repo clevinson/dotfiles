@@ -49,14 +49,37 @@ COMPLETION_WAITING_DOTS="true"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git)
+# plugins=(vi-mode)
+source $ZSH/oh-my-zsh.sh
 
 # User configuration
+export KEYTIMEOUT=1
 
+GIT_PROMPT_EXECUTABLE="haskell"
+
+# Pluginzzzz
+. $HOME/.zsh/plugins/bd/bd.zsh # bd via the spotify Luigi dude
+. $HOME/.zsh/plugins/zsh-git-prompt/zshrc.sh # via github.com/oliververdier/zsh-git-prompt
+. $HOME/.zsh/plugins/vi-mode.zsh # vi-mode / edited by meee
+. $HOME/.zsh/plugins/fzy.zsh # fzy via cloudhead
+#. /Users/cory/.local/lib/python2.7/site-packages/powerline/bindings/zsh/powerline.zsh
+
+# export PATH stuffs
 export PATH="/usr/bin:/bin:/usr/sbin:/sbin"
 # export MANPATH="/usr/local/man:$MANPATH"
 
-source $ZSH/oh-my-zsh.sh
+
+# History
+setopt BANG_HIST                 # Treat the '!' character specially during expansion.
+setopt EXTENDED_HISTORY          # Write the history file in the ":start:elapsed;command" format.
+setopt INC_APPEND_HISTORY        # Write to the history file immediately, not when the shell exits.
+setopt HIST_EXPIRE_DUPS_FIRST    # Expire duplicate entries first when trimming history.
+setopt HIST_IGNORE_DUPS          # Don't record an entry that was just recorded again.
+setopt HIST_IGNORE_ALL_DUPS      # Delete old recorded entry if new entry is a duplicate.
+setopt HIST_FIND_NO_DUPS         # Do not display a line previously found.
+setopt HIST_SAVE_NO_DUPS         # Don't write duplicate entries in the history file.
+setopt HIST_REDUCE_BLANKS        # Remove superfluous blanks before recording entry.
+
 
 # You may need to manually set your language environment
 # export LANG=en_US.UTF-8
@@ -88,19 +111,23 @@ source ~/.nix-profile/etc/profile.d/nix.sh
 # add gem bin path from nix's gem binary
 # GEM_BIN=$(gem env | grep EXECUTABLE\ DIRECTORY | sed 's;.*EXECUTABLE DIRECTORY: \(.*\);\1;g')
 export GOPATH=$HOME/.go
-export PATH=$HOME/anaconda/bin:$HOME/bin:$GOPATH/bin:/usr/local/bin:$PATH
+export PATH=$HOME/.cabal/bin:$HOME/anaconda/bin:$HOME/bin:$GOPATH/bin:/usr/local/bin:$PATH
 export SBT_OPTS=-XX:MaxPermSize=512m
 export JAVA_HOME="$(/usr/libexec/java_home -v 1.8)"
 
 
-# export docker env variables
-alias docker-env='eval "$(docker-machine env default)"'
-
 alias docker-clean='docker rm -v $(docker ps -a -q -f status=exited)'
 
-# zsh-bd
-. $HOME/.zsh/plugins/bd/bd.zsh
-
-#. /Users/cory/.local/lib/python2.7/site-packages/powerline/bindings/zsh/powerline.zsh
+mount-whatbox() {
+  umount /Volumes/Whatbox
+  mkdir -p /Volumes/Whatbox
+  sshfs -o reconnect -o volname=Whatbox famusmockingbird@chocolate.whatbox.ca:files /Volumes/Whatbox
+}
 
 export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
+
+# The next line updates PATH for the Google Cloud SDK.
+source '/Users/cory/Code/google/google-cloud-sdk/path.zsh.inc'
+
+# The next line enables shell command completion for gcloud.
+source '/Users/cory/Code/google/google-cloud-sdk/completion.zsh.inc'
