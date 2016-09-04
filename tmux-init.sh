@@ -22,7 +22,7 @@ function set_cursor_shape {
 function tmux_cursor_checker {
   echo "$$" > /tmp/tmux_cursor_checker.pid
   tail -f $TMUX_LOG | \
-    grep --line-buffered -E "select-(windiw|pane)" | \
+    grep --line-buffered -E "select-(window|pane)" | \
     while read line
     do
       set_cursor_shape $( \
