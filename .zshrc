@@ -117,6 +117,7 @@ export JAVA_HOME="$(/usr/libexec/java_home -v 1.8)"
 
 
 alias docker-clean='docker rm -v $(docker ps -a -q -f status=exited)'
+alias denv='eval $(docker-machine env default)'
 
 mount-whatbox() {
   umount /Volumes/Whatbox
