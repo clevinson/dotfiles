@@ -111,7 +111,7 @@ source ~/.nix-profile/etc/profile.d/nix.sh
 # add gem bin path from nix's gem binary
 # GEM_BIN=$(gem env | grep EXECUTABLE\ DIRECTORY | sed 's;.*EXECUTABLE DIRECTORY: \(.*\);\1;g')
 export GOPATH=$HOME/.go
-export PATH=$HOME/.cabal/bin:$HOME/anaconda/bin:$HOME/bin:$GOPATH/bin:/usr/local/bin:$PATH
+export PATH=$HOME/.local/bin:$HOME/.cabal/bin:$HOME/anaconda/bin:$HOME/bin:$GOPATH/bin:/usr/local/bin:$PATH
 export SBT_OPTS=-XX:MaxPermSize=512m
 export JAVA_HOME="$(/usr/libexec/java_home -v 1.8)"
 

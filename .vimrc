@@ -18,7 +18,14 @@ Plugin 'wlangstroth/vim-racket'
 Plugin 'luochen1990/rainbow'
 Plugin 'airblade/vim-gitgutter'
 Plugin 'wincent/command-t'
-Plugin 'jszakmeister/vim-togglecursor'
+" Plugin 'jszakmeister/vim-togglecursor'
+Plugin 'sjl/vitality.vim'
+Plugin 'tmux-plugins/vim-tmux'
+
+" powerline
+" python from powerline.vim import setup as powerline_setup
+" python powerline_setup()
+" python del powerline_setup
 
 " The following are examples of different formats supported.
 " Keep Plugin commands between vundle#begin/end.
@@ -110,9 +117,9 @@ xmap <C-k>     <Plug>(neosnippet_expand_target)
 
 
 " Cursor stuff.... make it underlines and sometimes not 
-let g:togglecursor_default = "block"
-let g:togglecursor_insert = "underline"
-
+" let g:togglecursor_default = "block"
+" let g:togglecursor_insert = "underline"
+"
 
 
 inoremap <expr><C-g>     neocomplete#undo_completion()
