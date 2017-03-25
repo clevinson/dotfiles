@@ -1,12 +1,3 @@
-# Path to your oh-my-zsh installation.
-export ZSH=/Users/cory/.oh-my-zsh
-
-# Set name of the theme to load.
-# Look in ~/.oh-my-zsh/themes/
-# Optionally, if you set this to "random", it'll load a random theme each
-# time that oh-my-zsh is loaded.
-ZSH_THEME="patience"
-
 # Uncomment the following line to use case-sensitive completion.
 # CASE_SENSITIVE="true"
 
@@ -14,17 +5,8 @@ ZSH_THEME="patience"
 # sensitive completion must be off. _ and - will be interchangeable.
 # HYPHEN_INSENSITIVE="true"
 
-# Uncomment the following line to disable bi-weekly auto-update checks.
-# DISABLE_AUTO_UPDATE="true"
-
-# Uncomment the following line to change how often to auto-update (in days).
-# export UPDATE_ZSH_DAYS=13
-
-# Uncomment the following line to disable colors in ls.
-# DISABLE_LS_COLORS="true"
-
 # Uncomment the following line to disable auto-setting terminal title.
-# DISABLE_AUTO_TITLE="true"
+DISABLE_AUTO_TITLE="true"
 
 # Uncomment the following line to enable command auto-correction.
 ENABLE_CORRECTION="true"
@@ -45,29 +27,18 @@ COMPLETION_WAITING_DOTS="true"
 # Would you like to use another custom folder than $ZSH/custom?
 # ZSH_CUSTOM=/path/to/new-custom-folder
 
-# Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
-# Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
-# Example format: plugins=(rails git textmate ruby lighthouse)
-# Add wisely, as too many plugins slow down shell startup.
-# plugins=(vi-mode)
-source $ZSH/oh-my-zsh.sh
-
 # User configuration
 export KEYTIMEOUT=1
-
-GIT_PROMPT_EXECUTABLE="haskell"
 
 # Pluginzzzz
 . $HOME/.zsh/plugins/bd/bd.zsh # bd via the spotify Luigi dude
 . $HOME/.zsh/plugins/zsh-git-prompt/zshrc.sh # via github.com/oliververdier/zsh-git-prompt
 . $HOME/.zsh/plugins/vi-mode.zsh # vi-mode / edited by meee
-. $HOME/.zsh/plugins/fzy.zsh # fzy via cloudhead
 #. /Users/cory/.local/lib/python2.7/site-packages/powerline/bindings/zsh/powerline.zsh
 
 # export PATH stuffs
-export PATH="/usr/bin:/bin:/usr/sbin:/sbin"
+export PATH="/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
 # export MANPATH="/usr/local/man:$MANPATH"
-
 
 # History
 setopt BANG_HIST                 # Treat the '!' character specially during expansion.
@@ -79,7 +50,6 @@ setopt HIST_IGNORE_ALL_DUPS      # Delete old recorded entry if new entry is a d
 setopt HIST_FIND_NO_DUPS         # Do not display a line previously found.
 setopt HIST_SAVE_NO_DUPS         # Don't write duplicate entries in the history file.
 setopt HIST_REDUCE_BLANKS        # Remove superfluous blanks before recording entry.
-
 
 # You may need to manually set your language environment
 # export LANG=en_US.UTF-8
@@ -106,8 +76,6 @@ setopt HIST_REDUCE_BLANKS        # Remove superfluous blanks before recording en
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 #
-#
-source ~/.nix-profile/etc/profile.d/nix.sh
 # add gem bin path from nix's gem binary
 # GEM_BIN=$(gem env | grep EXECUTABLE\ DIRECTORY | sed 's;.*EXECUTABLE DIRECTORY: \(.*\);\1;g')
 export GOPATH=$HOME/.go
@@ -115,20 +83,29 @@ export PATH=$HOME/.local/bin:$HOME/.cabal/bin:$HOME/anaconda/bin:$HOME/bin:$GOPA
 export SBT_OPTS=-XX:MaxPermSize=512m
 export JAVA_HOME="$(/usr/libexec/java_home -v 1.8)"
 
-
 alias docker-clean='docker rm -v $(docker ps -a -q -f status=exited)'
 alias denv='eval $(docker-machine env default)'
+alias l='ls -lh'
+alias vim='nvim'
 
 mount-whatbox() {
   umount /Volumes/Whatbox
   mkdir -p /Volumes/Whatbox
-  sshfs -o reconnect -o volname=Whatbox famusmockingbird@chocolate.whatbox.ca:files /Volumes/Whatbox
+  sshfs -o reconnect -o volname=Whatbox famusmockingbird@soup.whatbox.ca:files /Volumes/Whatbox
 }
-
-export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
 
 # The next line updates PATH for the Google Cloud SDK.
 source '/Users/cory/Code/google/google-cloud-sdk/path.zsh.inc'
 
 # The next line enables shell command completion for gcloud.
 source '/Users/cory/Code/google/google-cloud-sdk/completion.zsh.inc'
+
+export CLICOLOR=1
+export LSCOLORS="exBxfxdxDxexfxGxHxExEx"
+export PS1="%{$fg[green]%}%1~ %{$reset_color%}; "
+
+zstyle ':completion:*' menu select
+zstyle ':completion:*' list-colors 'di=34:ln=1;31:so=35:pi=33:ex=1;33:bd=34:cd=35:su=1;36:sg=1;37:tw=1;34:ow=1;34'
+
+# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
+export PATH="$PATH:$HOME/.rvm/bin"

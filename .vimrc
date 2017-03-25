@@ -13,14 +13,17 @@ Plugin 'derekwyatt/vim-scala'
 Plugin 'dbext.vim'
 Plugin 'vim-scripts/SQLUtilities'
 Plugin 'vim-scripts/Align'
-Plugin 'Shougo/neocomplete'
+" Plugin 'Shougo/neocomplete'
 Plugin 'wlangstroth/vim-racket'
 Plugin 'luochen1990/rainbow'
 Plugin 'airblade/vim-gitgutter'
 Plugin 'wincent/command-t'
 " Plugin 'jszakmeister/vim-togglecursor'
+Plugin 'junegunn/goyo.vim'
 Plugin 'sjl/vitality.vim'
 Plugin 'tmux-plugins/vim-tmux'
+Plugin 'sophacles/vim-processing'
+Plugin 'neomake/neomake'
 
 " powerline
 " python from powerline.vim import setup as powerline_setup
@@ -61,8 +64,8 @@ let g:dbext_default_profile_workingpanda = 'type=PGSQL:host=workingpanda:user=co
 let g:dbext_default_profile_ladybug = 'type=PGSQL:host=localhost:user=root:port=5432:dbname=ladybug'
 let g:dbext_default_profile = 'redpanda'
 
-let g:neocomplete#enable_at_startup = 1
-let g:neocomplete#enable_smart_case = 1
+" let g:neocomplete#enable_at_startup = 1
+" let g:neocomplete#enable_smart_case = 1
 
 let g:sqlutil_align_comma = 1
 let g:sqlutil_align_where = 0
@@ -95,36 +98,48 @@ let g:rainbow_active = 1
     \   }
     \}
 
-" Recommended key-mappings.
-" <CR>: close popup and save indent.
-inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
-function! s:my_cr_function()
-  return (pumvisible() ? "\<C-y>" : "" ) . "\<CR>"
-  " For no inserting <CR> key.
-  "return pumvisible() ? "\<C-y>" : "\<CR>"
-endfunction
-" <TAB>: completion.
-inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
-" <C-h>, <BS>: close popup and delete backword char.
-inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
-inoremap <expr><BS> neocomplete#smart_close_popup()."\<C-h>"
-" Close popup by <Space>.
-"inoremap <expr><Space> pumvisible() ? "\<C-y>" : "\<Space>"
-
-imap <C-k>     <Plug>(neosnippet_expand_or_jump)
-smap <C-k>     <Plug>(neosnippet_expand_or_jump)
-xmap <C-k>     <Plug>(neosnippet_expand_target)
+" NEOCOMPLETE STUFFZ
+" " Recommended key-mappings.
+" " <CR>: close popup and save indent.
+" inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
+" function! s:my_cr_function()
+"   return (pumvisible() ? "\<C-y>" : "" ) . "\<CR>"
+"   " For no inserting <CR> key.
+"   "return pumvisible() ? "\<C-y>" : "\<CR>"
+" endfunction
+" " <TAB>: completion.
+" inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
+" " <C-h>, <BS>: close popup and delete backword char.
+" inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
+" inoremap <expr><BS> neocomplete#smart_close_popup()."\<C-h>"
+" " Close popup by <Space>.
+" "inoremap <expr><Space> pumvisible() ? "\<C-y>" : "\<Space>"
+" 
+" imap <C-k>     <Plug>(neosnippet_expand_or_jump)
+" smap <C-k>     <Plug>(neosnippet_expand_or_jump)
+" xmap <C-k>     <Plug>(neosnippet_expand_target)
+"
+" inoremap <expr><C-g>     neocomplete#undo_completion()
+" inoremap <expr><C-l>     neocomplete#complete_common_string()
+" vmap <silent>sf        <Plug>SQLU_Formatter<CR> 
 
 
 " Cursor stuff.... make it underlines and sometimes not 
-" let g:togglecursor_default = "block"
-" let g:togglecursor_insert = "underline"
-"
+let g:togglecursor_default = "block"
+let g:togglecursor_insert = "underline"
 
+if has('nvim')
+  let $NVIM_TUI_ENABLE_CURSOR_SHAPE = 1
+elseif empty($TMUX)
+  let &t_SI = "\<Esc>]50;CursorShape=0\x7"
+  let &t_EI = "\<Esc>]50;CursorShape=1\x7"
+"  let &t_SR = "\<Esc>]50;CursorShape=2\x7"
+else
+  let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0\x7\<Esc>\\"
+  let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=1\x7\<Esc>\\"
+"  let &t_SR = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=2\x7\<Esc>\\"
+endif
 
-inoremap <expr><C-g>     neocomplete#undo_completion()
-inoremap <expr><C-l>     neocomplete#complete_common_string()
-vmap <silent>sf        <Plug>SQLU_Formatter<CR> 
 
 autocmd StdinReadPre * let s:std_in=1
 autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif

@@ -25,7 +25,7 @@ function tmux_cursor_checker {
     grep --line-buffered -E "select-(window|pane)" | \
     while read line
     do
-      if [[ $(tmux display -p '#{pane_current_command}') != 'vim' ]]; then
+      if [[ $(tmux display -p '#{pane_current_command}') != 'vim' || $(tmux display -p '#{pane_current_command}') != 'nvim' ]]; then
         set_cursor_shape $( \
           tmux showenv -g TMUX_CURSOR_SHAPE_$(tmux display -p "#I_#D" | tr -d %) | \
           sed 's/^.*=//' \
