@@ -2,7 +2,7 @@
 
 # cd into .tmux dir so logs get created there
 # create new 'sebald' session if it doesn't already exist
-cd ~/.tmux/logs && tmux -v new -d -s sebald -c ~ &> /dev/null
+rm -f ~/.tmux/logs/* && cd ~/.tmux/logs && tmux -v new -d -s sebald -c ~ &> /dev/null
 
 # set tmux server log file env-var
 TMUX_SERVER_PID=$(tmux display -p "#{pid}")

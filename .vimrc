@@ -24,6 +24,8 @@ Plugin 'sjl/vitality.vim'
 Plugin 'tmux-plugins/vim-tmux'
 Plugin 'sophacles/vim-processing'
 Plugin 'neomake/neomake'
+Plugin 'ndmitchell/ghcid', { 'rtp': 'plugins/nvim' }
+Plugin 'elmcast/elm-vim'
 
 " powerline
 " python from powerline.vim import setup as powerline_setup
@@ -140,6 +142,21 @@ else
 "  let &t_SR = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=2\x7\<Esc>\\"
 endif
 
+" fast-tags thingy
+" Add these to your vimrc to automatically keep the tags file up to date.
+" Unfortunately silent means the errors look a little ugly, I suppose I could
+" capture those and print them out with echohl WarningMsg.
+au BufWritePost *.hs            silent !init-tags %
+au BufWritePost *.hsc           silent !init-tags %
+
+" If you use qualified tags, then you have to change iskeyword to include
+" a dot.  Unfortunately, that affects a lot of other commands, such as
+" w, and \< \> regexes used by * and #.  For me, this is confusing because
+" it's inconsistent with vim keys everywhere else.
+" This binding temporarily modifies iskeyword just for the ^] command.
+nnoremap <silent> <c-]> :setl iskeyword=@,_,.,48-57,39<cr><c-]>
+    \:setl iskeyword=@,48-57,_,192-255<cr>
+
 
 autocmd StdinReadPre * let s:std_in=1
 autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
@@ -150,6 +167,10 @@ autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isT
 
 " set help to open always in new tab
 cabbrev help tab help
+
+" pbcopy / pbpaste with normal commands
+vmap <C-x> :!pbcopy<CR>
+vmap <C-c> :w !pbcopy<CR><CR>
 
 set listchars=tab:→\ ,trail:·,extends:#,nbsp:.
 set list
@@ -163,6 +184,8 @@ highlight SignColumn ctermbg=blue
 set number
 
 set laststatus=2
+
+nnoremap <CR> :noh<CR><CR>
 
 
 filetype plugin on
