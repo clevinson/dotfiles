@@ -14,6 +14,12 @@ function set_cursor_shape
     print -n -- "\E]50;CursorShape=$1\C-G"
   fi
 }
+#{
+#  RPROMPT=""
+#  [[ $KEYMAP = vicmd ]] && RPROMPT="%{$fg[red]%}[COMMAND]%{$reset_color%}"
+#  () { return $__prompt_status }
+#  zle reset-prompt
+#}
 
 function set_tmux_cursor_variable {
   if [ -n "$TMUX" ]; then

@@ -6,3 +6,5 @@
 	default = simple
 [core]
 	editor = /usr/local/bin/nvim
+[http]
+	postBuffer = 524288000

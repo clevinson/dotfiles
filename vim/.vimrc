@@ -20,17 +20,21 @@ Plugin 'airblade/vim-gitgutter'
 Plugin 'wincent/command-t'
 " Plugin 'jszakmeister/vim-togglecursor'
 Plugin 'junegunn/goyo.vim'
+Plugin 'junegunn/limelight.vim'
 Plugin 'sjl/vitality.vim'
 Plugin 'tmux-plugins/vim-tmux'
 Plugin 'sophacles/vim-processing'
 Plugin 'neomake/neomake'
 Plugin 'ndmitchell/ghcid', { 'rtp': 'plugins/nvim' }
 Plugin 'elmcast/elm-vim'
-
-" powerline
-" python from powerline.vim import setup as powerline_setup
-" python powerline_setup()
-" python del powerline_setup
+Plugin 'tomlion/vim-solidity'
+Plugin 'pangloss/vim-javascript'
+Plugin 'mxw/vim-jsx'
+Plugin 'quramy/vim-js-pretty-template'
+Plugin 'posva/vim-vue'
+Plugin 'godlygeek/tabular'
+Plugin 'plasticboy/vim-markdown'
+Plugin 'Rykka/InstantRst'
 
 " The following are examples of different formats supported.
 " Keep Plugin commands between vundle#begin/end.
@@ -60,6 +64,19 @@ nnoremap c "_c
 vnoremap c "_c
 nnoremap C "_C
 vnoremap C "_C
+
+" " Copy to clipboard
+vnoremap  y  "+y
+nnoremap  Y  "+yg_
+nnoremap  yy  "+yy
+vnoremap  x  "+x
+vnoremap  X  "+xg_
+
+" " Paste from clipboard
+" nnoremap p "+p
+" nnoremap P "+P
+" vnoremap p "+p
+" vnoremap P "+P
 
 let g:dbext_default_profile_redpanda = 'type=PGSQL:host=redpanda:user=cory:port=5432:dbname=redpanda'
 let g:dbext_default_profile_workingpanda = 'type=PGSQL:host=workingpanda:user=cory:port=5432:dbname=workingpanda'
@@ -91,7 +108,10 @@ let g:rainbow_active = 1
     \           'guifgs': ['royalblue3', 'darkorange3', 'seagreen3', 'firebrick', 'darkorchid3'],
     \       },
     \       'vim': {
-    \           'parentheses': ['start=/(/ end=/)/', 'start=/\[/ end=/\]/', 'start=/{/ end=/}/ fold', 'start=/(/ end=/)/ containedin=vimFuncBody', 'start=/\[/ end=/\]/ containedin=vimFuncBody', 'start=/{/ end=/}/ fold containedin=vimFuncBody'],
+    \           'parentheses': ['start=/(/ end=/)/', 'start=/\[/ end=/\]/', 'start=/{/ end=/}/ fold',
+    \                           'start=/(/ end=/)/ containedin=vimFuncBody',
+    \                           'start=/\[/ end=/\]/ containedin=vimFuncBody',
+    \                           'start=/{/ end=/}/ fold containedin=vimFuncBody'],
     \       },
     \       'html': {
     \           'parentheses': ['start=/\v\<((area|base|br|col|embed|hr|img|input|keygen|link|menuitem|meta|param|source|track|wbr)[ >])@!\z([-_:a-zA-Z0-9]+)(\s+[-_:a-zA-Z0-9]+(\=("[^"]*"|'."'".'[^'."'".']*'."'".'|[^ '."'".'"><=`]*))?)*\>/ end=#</\z1># fold'],
@@ -125,29 +145,17 @@ let g:rainbow_active = 1
 " inoremap <expr><C-l>     neocomplete#complete_common_string()
 " vmap <silent>sf        <Plug>SQLU_Formatter<CR> 
 
-
-" Cursor stuff.... make it underlines and sometimes not 
-let g:togglecursor_default = "block"
-let g:togglecursor_insert = "underline"
-
-if has('nvim')
-  let $NVIM_TUI_ENABLE_CURSOR_SHAPE = 1
-elseif empty($TMUX)
-  let &t_SI = "\<Esc>]50;CursorShape=0\x7"
-  let &t_EI = "\<Esc>]50;CursorShape=1\x7"
-"  let &t_SR = "\<Esc>]50;CursorShape=2\x7"
-else
-  let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0\x7\<Esc>\\"
-  let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=1\x7\<Esc>\\"
-"  let &t_SR = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=2\x7\<Esc>\\"
-endif
+" cusror shape settings
+set guicursor=n-v-c:block-Cursor/lCursor-blinkon0,i-ci:ver25-Cursor/lCursor,r-cr:hor20-Cursor/lCursor
+" set cursor back to termianl settiongs (underscore)
+au VimLeave * set guicursor=a:hor20-blinkon0
 
 " fast-tags thingy
 " Add these to your vimrc to automatically keep the tags file up to date.
 " Unfortunately silent means the errors look a little ugly, I suppose I could
 " capture those and print them out with echohl WarningMsg.
-au BufWritePost *.hs            silent !init-tags %
-au BufWritePost *.hsc           silent !init-tags %
+" au BufWritePost *.hs            silent !init-tags %
+" au BufWritePost *.hsc           silent !init-tags %
 
 " If you use qualified tags, then you have to change iskeyword to include
 " a dot.  Unfortunately, that affects a lot of other commands, such as
@@ -161,20 +169,15 @@ nnoremap <silent> <c-]> :setl iskeyword=@,_,.,48-57,39<cr><c-]>
 autocmd StdinReadPre * let s:std_in=1
 autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
 
-
-
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
 " set help to open always in new tab
 cabbrev help tab help
 
-" pbcopy / pbpaste with normal commands
-vmap <C-x> :!pbcopy<CR>
-vmap <C-c> :w !pbcopy<CR><CR>
-
 set listchars=tab:→\ ,trail:·,extends:#,nbsp:.
 set list
 
+" tab settings
 set backspace=2
 set tabstop=2 shiftwidth=2 expandtab ai
 
@@ -187,9 +190,71 @@ set laststatus=2
 
 nnoremap <CR> :noh<CR><CR>
 
-
 filetype plugin on
 set omnifunc=syntaxcomplete#Complete
 
 syntax enable
 syntax on
+
+set mouse=a
+
+" Goyo settings
+
+function! s:goyo_enter()
+  set noshowcmd
+  set scrolloff=999
+  set linebreak
+  Limelight
+endfunction
+
+function! s:goyo_leave()
+  set showmode
+  set showcmd
+  set scrolloff=5
+  set nolinebreak
+  Limelight!
+endfunction
+
+autocmd! User GoyoEnter nested call <SID>goyo_enter()
+autocmd! User GoyoLeave nested call <SID>goyo_leave()
+
+autocmd BufNewFile,BufReadPost *.md set filetype=markdown
+
+au Filetype markdown Goyo 80
+au Filetype txt Goyo 80
+
+function! g:Goyo_before()
+  let b:quitting = 0
+  let b:quitting_bang = 0
+  autocmd QuitPre <buffer> let b:quitting = 1
+  cabbrev <buffer> q! let b:quitting_bang = 1 <bar> q!
+endfunction
+
+function! g:Goyo_after()
+  " Quit Vim if this is the only remaining buffer
+  if b:quitting && len(filter(range(1, bufnr('$')), 'buflisted(v:val)')) == 1
+    if b:quitting_bang
+      qa!
+    else
+      qa
+    endif
+  endif
+endfunction
+
+let g:goyo_callbacks = [function('g:Goyo_before'), function('g:Goyo_after')]
+
+" Limelight (dimming non-focused sections)
+" Color name (:help cterm-colors) or ANSI code
+let g:limelight_conceal_ctermfg = 'gray'
+let g:limelight_conceal_ctermfg = 240
+
+" default: 0.5
+let g:limelight_default_coefficient = 0.7
+
+" Number of preceding/following paragraphs to include (default: 0)
+let g:limelight_paragraph_span = 0
+
+autocmd FileType javascript JsPreTmpl html
+
+" Disable default folding behavior in vim-markdown plugin
+let g:vim_markdown_folding_disabled = 1

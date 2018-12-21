@@ -1,3 +1,8 @@
+export CLICOLOR=1
+export LSCOLORS="exBxfxdxDxexfxGxHxExEx"
+export PS1="%{$fg[green]%}%1~ %{$reset_color%}; "
+export EDITOR=vim
+
 # Uncomment the following line to use case-sensitive completion.
 # CASE_SENSITIVE="true"
 
@@ -28,13 +33,10 @@ COMPLETION_WAITING_DOTS="true"
 # ZSH_CUSTOM=/path/to/new-custom-folder
 
 # User configuration
-export KEYTIMEOUT=1
+# export KEYTIMEOUT=1
 
-# Pluginzzzz
-. $HOME/.zsh/plugins/bd/bd.zsh # bd via the spotify Luigi dude
-. $HOME/.zsh/plugins/zsh-git-prompt/zshrc.sh # via github.com/oliververdier/zsh-git-prompt
-. $HOME/.zsh/plugins/vi-mode.zsh # vi-mode / edited by meee
-#. /Users/cory/.local/lib/python2.7/site-packages/powerline/bindings/zsh/powerline.zsh
+# enable colors in prompt
+autoload -U colors && colors
 
 # export PATH stuffs
 export PATH="/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
@@ -51,8 +53,10 @@ setopt HIST_FIND_NO_DUPS         # Do not display a line previously found.
 setopt HIST_SAVE_NO_DUPS         # Don't write duplicate entries in the history file.
 setopt HIST_REDUCE_BLANKS        # Remove superfluous blanks before recording entry.
 
-# You may need to manually set your language environment
-# export LANG=en_US.UTF-8
+
+export HISTSIZE=1000
+export SAVEHIST=1000
+export HISTFILE=~/.history
 
 # Preferred editor for local and remote sessions
 # if [[ -n $SSH_CONNECTION ]]; then
@@ -60,28 +64,6 @@ setopt HIST_REDUCE_BLANKS        # Remove superfluous blanks before recording en
 # else
 #   export EDITOR='mvim'
 # fi
-
-# Compilation flags
-# export ARCHFLAGS="-arch x86_64"
-
-# ssh
-# export SSH_KEY_PATH="~/.ssh/dsa_id"
-
-# Set personal aliases, overriding those provided by oh-my-zsh libs,
-# plugins, and themes. Aliases can be placed here, though oh-my-zsh
-# users are encouraged to define aliases within the ZSH_CUSTOM folder.
-# For a full list of active aliases, run `alias`.
-#
-# Example aliases
-# alias zshconfig="mate ~/.zshrc"
-# alias ohmyzsh="mate ~/.oh-my-zsh"
-#
-# add gem bin path from nix's gem binary
-# GEM_BIN=$(gem env | grep EXECUTABLE\ DIRECTORY | sed 's;.*EXECUTABLE DIRECTORY: \(.*\);\1;g')
-export GOPATH=$HOME/.go
-export PATH=$HOME/.local/bin:$HOME/.cabal/bin:$HOME/anaconda/bin:$HOME/bin:$GOPATH/bin:/usr/local/bin:$PATH
-export SBT_OPTS=-XX:MaxPermSize=512m
-export JAVA_HOME="$(/usr/libexec/java_home -v 1.8)"
 
 alias docker-clean='docker rm -v $(docker ps -a -q -f status=exited)'
 alias denv='eval $(docker-machine env default)'
@@ -91,21 +73,49 @@ alias vim='nvim'
 mount-whatbox() {
   umount /Volumes/Whatbox
   mkdir -p /Volumes/Whatbox
-  sshfs -o reconnect -o volname=Whatbox famusmockingbird@soup.whatbox.ca:files /Volumes/Whatbox
+  sshfs -o reconnect -o volname=Whatbox famusmockingbird@rosetta.whatbox.ca:files /Volumes/Whatbox
 }
 
-# The next line updates PATH for the Google Cloud SDK.
-source '/Users/cory/Code/google/google-cloud-sdk/path.zsh.inc'
+whatbox-down() {
+  rsync -avh --progress --iconv=utf-8-mac,utf-8 rosetta:~/files/music/ ~/Music/soup
+  find ~/Music/soup -name "*flac" -exec ffmpeg -i {} -ab 320k -map_metadata 0 -id3v2_version 3 {}.mp3 \;
 
-# The next line enables shell command completion for gcloud.
-source '/Users/cory/Code/google/google-cloud-sdk/completion.zsh.inc'
+  ITUNES_DIR=$(find ~/Music/ -name "Automatically Add*")
 
-export CLICOLOR=1
-export LSCOLORS="exBxfxdxDxexfxGxHxExEx"
-export PS1="%{$fg[green]%}%1~ %{$reset_color%}; "
+  find ~/Music/soup -name "*.mp3" -exec mv {} "$ITUNES_DIR" \;
+}
 
 zstyle ':completion:*' menu select
 zstyle ':completion:*' list-colors 'di=34:ln=1;31:so=35:pi=33:ex=1;33:bd=34:cd=35:su=1;36:sg=1;37:tw=1;34:ow=1;34'
 
-# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
-export PATH="$PATH:$HOME/.rvm/bin"
+# Plugins (edit via .zsh_plugins.txt)
+source ~/.zsh_plugins.sh
+
+# vi-mode plugin
+. $HOME/.zsh/plugins/vi-mode.zsh
+
+# load NVM lazily
+nvm() {
+  if [[ -d "$HOME/.nvm" ]]; then
+    export NVM_DIR="$HOME/.nvm"
+    source "${NVM_DIR}/nvm.sh"
+    if [[ -e ~/.nvm/alias/default ]]; then
+      NVM_BIN=$(npm config --global get prefix)/bin
+      PATH=$PATH:$NVM_BIN
+    fi
+    # invoke the real nvm function now
+    nvm "$@"
+  else
+    echo "nvm is not installed" >&2
+    return 1
+  fi
+}
+
+source ~/.rvm/scripts/rvm
+
+export GOPATH=$HOME/.go
+export CABALPATH=$HOME/Library/Haskell/bin
+export PYTHONPATH=$HOME/anaconda3/bin
+export RVMPATH=$HOME/.rvm/bin
+
+export PATH=$HOME/.local/bin:$CABALPATH:$NPMPATH:$RVMPATH:$HOME/bin:$GOPATH/bin:$PYTHONPATH:/usr/local/bin:$PATH
