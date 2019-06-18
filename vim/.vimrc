@@ -35,6 +35,10 @@ Plugin 'posva/vim-vue'
 Plugin 'godlygeek/tabular'
 Plugin 'plasticboy/vim-markdown'
 Plugin 'Rykka/InstantRst'
+Plugin 'PratikBhusal/vim-grip'
+Plugin 'styled-components/vim-styled-components'
+Plugin 'hail2u/vim-css3-syntax'
+
 
 " The following are examples of different formats supported.
 " Keep Plugin commands between vundle#begin/end.
@@ -205,6 +209,7 @@ function! s:goyo_enter()
   set scrolloff=999
   set linebreak
   Limelight
+
 endfunction
 
 function! s:goyo_leave()
@@ -213,7 +218,9 @@ function! s:goyo_leave()
   set scrolloff=5
   set nolinebreak
   Limelight!
+
 endfunction
+
 
 autocmd! User GoyoEnter nested call <SID>goyo_enter()
 autocmd! User GoyoLeave nested call <SID>goyo_leave()
@@ -226,6 +233,7 @@ au Filetype txt Goyo 80
 function! g:Goyo_before()
   let b:quitting = 0
   let b:quitting_bang = 0
+  autocmd BufLeave NERD_tree_* call feedkeys("\<C-w>=")
   autocmd QuitPre <buffer> let b:quitting = 1
   cabbrev <buffer> q! let b:quitting_bang = 1 <bar> q!
 endfunction
@@ -242,17 +250,6 @@ function! g:Goyo_after()
 endfunction
 
 let g:goyo_callbacks = [function('g:Goyo_before'), function('g:Goyo_after')]
-
-" Limelight (dimming non-focused sections)
-" Color name (:help cterm-colors) or ANSI code
-let g:limelight_conceal_ctermfg = 'gray'
-let g:limelight_conceal_ctermfg = 240
-
-" default: 0.5
-let g:limelight_default_coefficient = 0.7
-
-" Number of preceding/following paragraphs to include (default: 0)
-let g:limelight_paragraph_span = 0
 
 autocmd FileType javascript JsPreTmpl html
 

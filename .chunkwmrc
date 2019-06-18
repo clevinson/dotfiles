@@ -6,6 +6,7 @@
 #
 
 chunkc core::plugin_dir ~/.chunkwm_plugins
+chunkc config plugin_dir ~/.chunkwm_plugins
 #
 # NOTE: if enabled, chunkwm will monitor the specified plugin_dir
 #       and automatically reload any '.so' file that is changed.

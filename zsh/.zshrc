@@ -118,4 +118,4 @@ export CABALPATH=$HOME/Library/Haskell/bin
 export PYTHONPATH=$HOME/anaconda3/bin
 export RVMPATH=$HOME/.rvm/bin
 
-export PATH=$HOME/.local/bin:$CABALPATH:$NPMPATH:$RVMPATH:$HOME/bin:$GOPATH/bin:$PYTHONPATH:/usr/local/bin:$PATH
+export PATH=$PYTHONPATH:/usr/local/bin:$HOME/.local/bin:$CABALPATH:$NPMPATH:$RVMPATH:$HOME/bin:$GOPATH/bin:$PATH
