@@ -1,0 +1,7 @@
+# run this when updating plugins:
+# antibody bundle < ~/.zsh_plugins.txt > ~/.zsh_plugins.sh
+
+zsh-users/zsh-syntax-highlighting
+zsh-users/zsh-autosuggestions
+zsh-users/zsh-completions
+changyuheng/zsh-interactive-cd
