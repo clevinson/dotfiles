@@ -1,8 +1,9 @@
 # reload config
 cmd + alt + ctrl - r : skhd -r
 
+cmd + ctrl - r : launchctl kickstart -k "gui/${UID}/homebrew.mxcl.yabai"
+
 # open terminal
-cmd - return : /Applications/Kitty.app/Contents/MacOS/kitty --single-instance -d ~
 cmd + ctrl - return : osascript -e 'tell application "iTerm2" to create window with default profile'
 cmd + ctrl - c : osascript -e 'tell application "/Applications/Google Chrome.app" to make new window activate'
 
@@ -15,6 +16,12 @@ cmd - h : yabai -m window --focus west
 cmd - j : yabai -m window --focus south
 cmd - k : yabai -m window --focus north
 cmd - l : yabai -m window --focus east
+
+# focus window
+ctrl - pagedown : yabai -m window --focus west
+ctrl - left     : yabai -m window --focus south
+ctrl - down     : yabai -m window --focus north
+ctrl - right    : yabai -m window --focus east
 
 # swap window
 cmd + ctrl - h : yabai -m window --swap west
@@ -41,18 +48,18 @@ shift + alt - left   : yabai -m window --grid 1:2:0:0:1:1
 shift + alt - right  : yabai -m window --grid 1:2:1:0:1:1
 
 # create desktop, move window and follow focus
-shift + cmd - n : yabai -m space --create;\
-                  id=$(yabai -m query --spaces --monitor);\
-                  yabai -m window --space $(echo ${id##* });\
-                  yabai -m space --focus $(echo ${id##* })
+cmd + ctrl - n : yabai -m space --create;\
+                 id=$(yabai -m query --spaces --display | jq ".[-1].index");\
+                 yabai -m window --space $(echo ${id});\
+                 yabai -m space --focus $(echo ${id})
 
 # create desktop and follow focus
-cmd + alt - n : yabai -m space --create;\
-                id=$(yabai -m query --spaces --monitor);\
-                yabai -m space --focus $(echo ${id##* })
+alt - n : yabai -m space --create;\
+          id=$(yabai -m query --spaces --display | jq ".[-1].index");\
+          yabai -m space --focus $(echo ${id})
 
 # destroy desktop
-cmd + alt - w : yabai -m space --destroy
+alt - w : yabai -m space --destroy
 
 # fast focus desktop
 # ctrl - x : yabai -m space --focus last
@@ -103,16 +110,14 @@ alt + ctrl - 0 : yabai -m window --space 10
 # ctrl + alt - x  : yabai -m display --focus last
 # ctrl + alt - z  : yabai -m display --focus prev
 # ctrl + alt - c  : yabai -m display --focus next
-# ctrl + alt - 1  : yabai -m display --focus 0
-# ctrl + alt - 2  : yabai -m display --focus 1
-# ctrl + alt - 3  : yabai -m display --focus 2
+# ctrl - 0x1B : yabai -m display --focus 1
+ctrl - 0x18 : yabai -m display --focus last
 
 # send window to monitor and follow focus
-ctrl + cmd - z  : yabai -m window --display prev; yabai -m display --focus prev
-ctrl + cmd - c  : yabai -m window --display next; yabai -m display --focus next
-ctrl + cmd - 1  : yabai -m window --display 0; yabai -m display --focus 0
-ctrl + cmd - 2  : yabai -m window --display 1; yabai -m display --focus 1
-ctrl + cmd - 3  : yabai -m window --display 2; yabai -m display --focus 2
+# ctrl + cmd - 1    : yabai -m window --display prev; yabai -m display --focus 1
+# ctrl + cmd - 2    : yabai -m window --display next; yabai -m display --focus 2
+# ctrl + cmd - 0x1B : yabai -m window --display 1; yabai -m display --focus 1
+ctrl + cmd - 0x18 : yabai -m window --display last; yabai -m display --focus last
 
 # move window
 shift + ctrl - a : yabai -m window --move -20:0
@@ -151,7 +156,7 @@ alt - x : yabai -m space --mirror x-axis
 alt - a : yabai -m space --toggle padding; yabai -m space --toggle gap
 
 # toggle window fullscreen
-alt - f : yabai -m window --toggle fullscreen
+alt - f : yabai -m window --toggle zoom-fullscreen
 
 # toggle window native fullscreen
 shift + alt - f : yabai -m window --toggle native-fullscreen
@@ -181,3 +186,20 @@ cmd + shift - d : yabai -m space --layout float
 # up arrow (for better terminal reverse lookup)
 ctrl - k : skhd -k "up"
 ctrl - j : skhd -k "down"
+
+# media keys
+
+
+ctrl - 0x19 : osascript -e 'set volume output volume (output volume of (get volume settings)) - 10'
+ctrl - s : osascript -e 'tell application "Music" to previous track'
+ctrl - d : osascript -e 'tell application "Music" to playpause'
+ctrl - f : osascript -e 'tell application "Music" to next track'
+ctrl - 0x2F : osascript -e 'tell application "Music" to set player position to (player position + 30)'
+ctrl - 0x2B : osascript -e 'tell application "Music" to set player position to (player position - 30)'
+
+# ctrl - insert : skhd -k "up"
+ctrl - insert : osascript -e 'set volume output volume (output volume of (get volume settings)) + 10'
+# 0x63 : skhd --key "previous"
+ctrl - d : skhd -k "p"
+# 0x60 : skhd -k "next"
+# : skhd -k "0x37"

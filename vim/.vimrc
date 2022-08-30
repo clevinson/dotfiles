@@ -1,12 +1,4 @@
-set nocompatible              " be iMproved, required
-filetype off                  " required
-
-" set the runtime path to include Vundle and initialize
-set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
-
 " let Vundle manage Vundle, required
-Plugin 'VundleVim/Vundle.vim'
 
 Plugin 'scrooloose/nerdtree'
 Plugin 'derekwyatt/vim-scala'
@@ -38,7 +30,11 @@ Plugin 'Rykka/InstantRst'
 Plugin 'PratikBhusal/vim-grip'
 Plugin 'styled-components/vim-styled-components'
 Plugin 'hail2u/vim-css3-syntax'
-
+Plugin 'junegunn/fzf'
+Plugin 'autozimu/LanguageClient-neovim', {
+     \ 'branch': 'next',
+     \ 'do': 'bash install.sh',
+     \ }
 
 " The following are examples of different formats supported.
 " Keep Plugin commands between vundle#begin/end.
@@ -192,13 +188,18 @@ set number
 
 set laststatus=2
 
-nnoremap <CR> :noh<CR><CR>
+" nnoremap <CR> :noh<CR><CR>
+set nohlsearch
+map <leader>h :set hlsearch!<cr><cr>
+
 
 filetype plugin on
 set omnifunc=syntaxcomplete#Complete
 
 syntax enable
 syntax on
+
+au BufReadPost *.svelte set syntax=html
 
 set mouse=a
 
@@ -255,3 +256,23 @@ autocmd FileType javascript JsPreTmpl html
 
 " Disable default folding behavior in vim-markdown plugin
 let g:vim_markdown_folding_disabled = 1
+
+
+
+"===================================================================
+" The following is all code for language server stuff !!
+" Copied from: https://github.com/autozimu/LanguageClient-neovim/blob/next/INSTALL.md
+" Required for operations modifying multiple buffers like rename.
+set hidden
+
+let g:LanguageClient_serverCommands = {
+    \ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
+    \ }
+    " \ 'javascript': ['/usr/local/bin/javascript-typescript-stdio'],
+    " \ 'javascript.jsx': ['tcp://127.0.0.1:2089'],
+    " \ 'python': ['/usr/local/bin/pyls'],
+    " \ 'ruby': ['~/.rbenv/shims/solargraph', 'stdio'],
+
+nnoremap <silent> K :call LanguageClient#textDocument_hover()<CR>
+nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
+nnoremap <silent> <F2> :call LanguageClient#textDocument_rename()<CR>

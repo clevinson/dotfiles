@@ -2,9 +2,12 @@
 [user]
 	name = Cory Levinson
 	email = cjlevinson@gmail.com
+	signingkey = E66BC59B0B2B5FEE
 [push]
 	default = simple
 [core]
 	editor = /usr/local/bin/nvim
 [http]
 	postBuffer = 524288000
+[gpg]
+	program = gpg2

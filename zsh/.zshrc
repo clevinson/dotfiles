@@ -52,6 +52,8 @@ setopt HIST_IGNORE_ALL_DUPS      # Delete old recorded entry if new entry is a d
 setopt HIST_FIND_NO_DUPS         # Do not display a line previously found.
 setopt HIST_SAVE_NO_DUPS         # Don't write duplicate entries in the history file.
 setopt HIST_REDUCE_BLANKS        # Remove superfluous blanks before recording entry.
+unsetopt prompt_cr prompt_sp     # Remove % as EOL marker
+
 
 
 export HISTSIZE=1000
@@ -68,21 +70,32 @@ export HISTFILE=~/.history
 alias docker-clean='docker rm -v $(docker ps -a -q -f status=exited)'
 alias denv='eval $(docker-machine env default)'
 alias l='ls -lh'
-alias vim='nvim'
+alias vim='node --version && nvim'
 
 mount-whatbox() {
   umount /Volumes/Whatbox
   mkdir -p /Volumes/Whatbox
-  sshfs -o reconnect -o volname=Whatbox famusmockingbird@rosetta.whatbox.ca:files /Volumes/Whatbox
+  sshfs -o reconnect -o volname=Whatbox famusmockingbird@titan.whatbox.ca:files /Volumes/Whatbox
 }
 
 whatbox-down() {
-  rsync -avh --progress --iconv=utf-8-mac,utf-8 rosetta:~/files/music/ ~/Music/soup
+
+  if [ -z "$NO_SYNC" ]
+  then
+    rsync -avh --progress --iconv=utf-8-mac,utf-8 titan:~/files/music/ ~/Music/soup
+  fi
+
   find ~/Music/soup -name "*flac" -exec ffmpeg -i {} -ab 320k -map_metadata 0 -id3v2_version 3 {}.mp3 \;
 
-  ITUNES_DIR=$(find ~/Music/ -name "Automatically Add*")
+  ITUNES_DIR=$(find ~/Music/ -name "Automatically Add to Music*")
 
   find ~/Music/soup -name "*.mp3" -exec mv {} "$ITUNES_DIR" \;
+}
+
+flac-2-itunes() {
+  find $1 -name "*flac" -exec ffmpeg -i {} -ab 320k -map_metadata 0 -id3v2_version 3 {}.mp3 \;
+  ITUNES_DIR=$(find ~/Music/ -name "Automatically Add to Music*")
+  find $1 -name "*.mp3" -exec mv {} "$ITUNES_DIR" \;
 }
 
 zstyle ':completion:*' menu select
@@ -94,28 +107,62 @@ source ~/.zsh_plugins.sh
 # vi-mode plugin
 . $HOME/.zsh/plugins/vi-mode.zsh
 
-# load NVM lazily
-nvm() {
-  if [[ -d "$HOME/.nvm" ]]; then
-    export NVM_DIR="$HOME/.nvm"
-    source "${NVM_DIR}/nvm.sh"
-    if [[ -e ~/.nvm/alias/default ]]; then
-      NVM_BIN=$(npm config --global get prefix)/bin
-      PATH=$PATH:$NVM_BIN
-    fi
-    # invoke the real nvm function now
-    nvm "$@"
-  else
-    echo "nvm is not installed" >&2
-    return 1
-  fi
-}
+# Defer initialization of nvm until nvm, node or a node-dependent command is
+# run. Ensure this block is only run once if .bashrc gets sourced multiple times
+# by checking whether __init_nvm is a function.
+if [ -s "$HOME/.nvm/nvm.sh" ] && [ ! "$(type -w __init_nvm)" = function ]; then
+  export NVM_DIR="$HOME/.nvm"
+  [ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion"
+  declare -a __node_commands=('nvm' 'node' 'npm' 'yarn' 'gulp' 'grunt' 'webpack')
+  function __init_nvm() {
+    for i in "${__node_commands[@]}"; do unalias $i; done
+    . "$NVM_DIR"/nvm.sh
+    unset __node_commands
+    unset -f __init_nvm
+  }
+  for i in "${__node_commands[@]}"; do alias $i='__init_nvm && '$i; done
+fi
 
 source ~/.rvm/scripts/rvm
 
-export GOPATH=$HOME/.go
-export CABALPATH=$HOME/Library/Haskell/bin
+
+grcov-rust(){
+  if [ ! $1 ]
+  then
+    project_name=$1
+  else
+    project_name=${PWD##*/}
+  fi
+  export CARGO_INCREMENTAL=0
+  export RUSTFLAGS="-Zprofile -Ccodegen-units=1 -Cinline-threshold=0 -Clink-dead-code -Coverflow-checks=off -Zno-landing-pads"
+  cargo build
+  cargo test
+  mkdir ccov
+  zip -0 ccov/ccov.zip `find . \( -name "$project_name*.gc*" \) -print`
+  grcov ccov/ccov.zip -s . -t lcov --llvm --branch --ignore-not-existing --ignore-dir "/*" -o ccov/lcov.info
+  genhtml -o ccov/ --show-details --highlight --ignore-errors source --legend ccov/lcov.info
+  firefox ccov/index.html
+  unset CARGO_INCREMENTAL
+  unset RUSTFLAGS
+}
+
 export PYTHONPATH=$HOME/anaconda3/bin
 export RVMPATH=$HOME/.rvm/bin
+export RUSTPATH="$HOME/.cargo/bin"
 
-export PATH=$PYTHONPATH:/usr/local/bin:$HOME/.local/bin:$CABALPATH:$NPMPATH:$RVMPATH:$HOME/bin:$GOPATH/bin:$PATH
+
+# Go development
+
+export GOPATH="${HOME}/go"
+export GOROOT="/usr/local/opt/go/libexec" # export GOROOT="$(brew --prefix golang)/libexec"
+export PATH="$PATH:${GOPATH}/bin:${GOROOT}/bin"
+test -d "${GOPATH}" || mkdir "${GOPATH}"
+test -d "${GOPATH}/src/github.com" || mkdir -p "${GOPATH}/src/github.com"
+
+
+export PATH=$RUSTPATH:$PYTHONPATH:/usr/local/bin:$RVMPATH:$HOME/.local/bin:$PATH
+
+
+tping () {
+    ping $1 | gawk '{ print strftime("%H:%M%:%S: ", systime()) $0 }'
+}
